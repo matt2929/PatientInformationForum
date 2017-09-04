@@ -53,12 +53,15 @@ public class MainActivity extends Activity {
         uploadButt = (Button) findViewById(R.id.uploadButt);
         completeButt = (Button) findViewById(R.id.complete);
         userName = (EditText)findViewById(R.id.username);
+
+
         completeButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 pressedStart();
             }
         });
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
@@ -66,9 +69,11 @@ public class MainActivity extends Activity {
                 Log.e("Radio", i + " selected");
             }
         });
+
         uploadButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //open file locator
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("*/*");
                 startActivityForResult(intent, PICKFILE_RESULT_CODE);
@@ -79,8 +84,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
+
         switch (requestCode) {
             case PICKFILE_RESULT_CODE:
+                //the user choose a file
                 if (resultCode == RESULT_OK) {
                     FilePathAttatch = data.getData();
                     uploadQuery.setText("File Uploaded: " + FilePathAttatch);
@@ -94,7 +101,6 @@ public class MainActivity extends Activity {
 
     public void pressedStart() {
         if (determineCompleteFill()) {
-
             emailFile(composeFile(),FilePathAttatch);
         }
     }
@@ -147,6 +153,7 @@ public class MainActivity extends Activity {
 
 
     public File composeFile() {
+        //generate a text file to send in the email
         try {
             File root = new File(Environment.getExternalStorageDirectory(), "Notes");
             if (!root.exists()) {
@@ -171,6 +178,7 @@ public class MainActivity extends Activity {
 
 
     public void emailFile(File file1,Uri file2) {
+        //start email
         if(file1==null&&file2==null){
             Toast toast = Toast.makeText(getApplicationContext(),"There was an error accessing memory",Toast.LENGTH_LONG);
         }else{
