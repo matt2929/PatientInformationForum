@@ -35,9 +35,8 @@ public class MainActivity extends Activity {
     Button uploadButt, completeButt;
     RadioButton selectedHand = null;
     private static final int PICKFILE_RESULT_CODE = 1;
-    Uri FilePathAttatch=null;
+    Uri FilePathAttatch = null;
     boolean fileFound = false;
-
     String FilePathText = null;
 
     @Override
@@ -52,7 +51,7 @@ public class MainActivity extends Activity {
         uploadQuery = findViewById(R.id.uploadQuery);
         uploadButt = (Button) findViewById(R.id.uploadButt);
         completeButt = (Button) findViewById(R.id.complete);
-        userName = (EditText)findViewById(R.id.username);
+        userName = (EditText) findViewById(R.id.username);
 
 
         completeButt.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +100,7 @@ public class MainActivity extends Activity {
 
     public void pressedStart() {
         if (determineCompleteFill()) {
-            emailFile(composeFile(),FilePathAttatch);
+            emailFile(composeFile(), FilePathAttatch);
         }
     }
 
@@ -110,21 +109,30 @@ public class MainActivity extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 // 2. Chain together various setter methods to set the dialog characteristics
-
-        if (goalText.getText().toString().equals("")) {
-            builder.setTitle("Please list some goals");
+        if(userName.getText().toString().equals("")){
+            builder.setTitle("Please give your name.");
             builder.setPositiveButton("close", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    // User clicked OK button
+                    dialog.dismiss();
                 }
             });
-
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+            return false;
+        }
+        if (goalText.getText().toString().equals("")) {
+            builder.setTitle("Please list some goals.");
+            builder.setPositiveButton("close", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
             final AlertDialog dialog = builder.create();
             dialog.show();
             return false;
         }
         if (ailmentText.getText().toString().equals("") && !fileFound) {
-            builder.setTitle("Please type out your medical history or upload medical files");
+            builder.setTitle("Please type out your medical history or upload medical files.");
             builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -136,7 +144,7 @@ public class MainActivity extends Activity {
             return false;
         }
         if (selectedHand == null) {
-            builder.setTitle("Please choose a hand size");
+            builder.setTitle("Please choose a hand size.");
             builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -162,10 +170,10 @@ public class MainActivity extends Activity {
             File gpxfile = new File(root, "dataToSend.txt");
 
             FileWriter writer = new FileWriter(gpxfile);
-            writer.append("Patient Name: "+ userName.getText().toString()+"\n");
-            writer.append("Hand Size: "+ selectedHand.getText().toString()+"\n");
-            writer.append("Patient Goals: "+ goalText.getText().toString()+"\n");
-            writer.append("Patient Medical Ailment: "+ailmentText.getText().toString()+"\n");
+            writer.append("Patient Name: " + userName.getText().toString() + "\n");
+            writer.append("Hand Size: " + selectedHand.getText().toString() + "\n");
+            writer.append("Patient Goals: " + goalText.getText().toString() + "\n");
+            writer.append("Patient Medical Ailment: " + ailmentText.getText().toString() + "\n");
             writer.flush();
             writer.close();
             Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
@@ -177,26 +185,26 @@ public class MainActivity extends Activity {
     }
 
 
-    public void emailFile(File file1,Uri file2) {
+    public void emailFile(File file1, Uri file2) {
         //start email
-        if(file1==null&&file2==null){
-            Toast toast = Toast.makeText(getApplicationContext(),"There was an error accessing memory",Toast.LENGTH_LONG);
-        }else{
-            String [] reciever = new String[]{"mcstaffo@buffalo.edu"};
+        if (file1 == null && file2 == null) {
+            Toast toast = Toast.makeText(getApplicationContext(), "There was an error accessing memory", Toast.LENGTH_LONG);
+        } else {
+            String[] reciever = new String[]{"mcstaffo@buffalo.edu"};
             String subject = ("Medical Information");
 
             Intent mailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
             mailIntent.putExtra(Intent.EXTRA_EMAIL, reciever);
             mailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
             ArrayList<Uri> uris = new ArrayList<Uri>();
-           if(file1!=null) {
+            if (file1 != null) {
                 uris.add(Uri.fromFile(file1));
             }
-           if(file2 !=null){
-               uris.add(file2);
+            if (file2 != null) {
+                uris.add(file2);
             }
             mailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-            mailIntent.putExtra(Intent.EXTRA_TEXT, "Patient "+userName.getText().toString()+" is sending you an email with his/her medical information.");
+            mailIntent.putExtra(Intent.EXTRA_TEXT, "Patient " + userName.getText().toString() + " is sending you an email with his/her medical information.");
             mailIntent.setType("message/rfc822");
             startActivity(Intent.createChooser(mailIntent, "Choose an application to send your mail with"));
         }
